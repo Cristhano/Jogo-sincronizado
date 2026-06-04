@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jogo</title>
     <style>
+        @font-face {
+            font-family: 'Minecraft';
+            src: url('./fonts/Minecraftia.ttf') format('truetype');
+        }
+
         body {
             display: flex;
             flex-direction: column;
@@ -24,12 +29,33 @@
             width: 500px;
             height: 500px;
         }
+
+        #jogadores {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            border: solid 1px rgb(221, 191, 159);
+            border-radius: 4px;
+            margin: 7px;
+            font-family: 'Minecraft', sans-serif;
+
+            width: 100%;
+            max-width: 400px;
+            background-color: bisque;
+        }
+
+        #playerDiv {
+            font-size: 100%;
+            font-family: 'Minecraft', sans-serif;
+        }
     </style>
     <script src="/socket.io/socket.io.js"></script>
 </head>
 
 <body>
     <canvas id="screen" width="21" height="21"></canvas>
+    <div id="jogadores"></div>
 
     <script type="module">
         import createKeybordListenes from './KeybordListenes.js'
@@ -39,6 +65,7 @@
         const socket = io()
         const screen = document.getElementById("screen");
         const game = CreateGame()
+        const playersBox = document.getElementById('jogadores')
 
         let state = game.state
         let playerId
@@ -52,10 +79,8 @@
             KeybordListenes.registerPlayerId(playerId)
             KeybordListenes.subscribe(game.movePlayer)
             KeybordListenes.subscribe((command) => {
-                socket.emit('move-player', command )
+                socket.emit('move-player', command)
             })
-
-            
         })
 
         socket.on('disconnect', (socket) => {
@@ -67,6 +92,15 @@
         socket.on('setup', (state) => {
             game.state = state
             renderScreen(screen, state, playerId, requestAnimationFrame)
+
+            playersBox.innerHTML = "Jogadores conectados: "
+            for (const playerId in game.state.players) {
+                const NewPlayerDiv = document.createElement("div")
+                NewPlayerDiv.id = 'playerDiv'
+                NewPlayerDiv.textContent = "Id: " + playerId
+
+                playersBox.appendChild(NewPlayerDiv)
+            }
         })
         socket.on('add-player', (command) => {
             game.addPlayer(command)
@@ -76,7 +110,7 @@
             game.removeplayer(command)
         })
 
-        socket.on('render', (command) => {renderScreen(screen, state, playerId, requestAnimationFrame)})
+        socket.on('render', (command) => { renderScreen(screen, state, playerId, requestAnimationFrame) })
     </script>
 </body>
 
