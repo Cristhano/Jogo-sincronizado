@@ -39,7 +39,10 @@ export default function CreateGame() {
         })
     }
     function addFruit(command) {
-        const fruit = command.fruitId
+        let fruit
+        if(command.fruitId){fruit = command.fruitId}else{
+            fruit = 'fruit ' + Math.floor(Math.random() * 100)
+        }
         let X = command.fruitX; if (!X) { X = Math.floor(Math.random() * state.screen.width) }
         let Y = command.fruitY; if (!Y) { Y = Math.floor(Math.random() * state.screen.height) }
 
@@ -78,8 +81,7 @@ export default function CreateGame() {
     }
     //Mover Jogador------
     function movePlayer(command) {
-        if(command.type != 'move-player'){return}
-        NotifyAll(command)
+        if (command.type != 'move-player') { return }
 
         const playerId = command.playerId
         const player = state.players[playerId];
@@ -96,6 +98,7 @@ export default function CreateGame() {
         if (player && MoveFunction) {
             MoveFunction(player)
             checkColision(player)
+            NotifyAll(command)
 
             console.log("move: " + player)
             console.log(state)
@@ -108,6 +111,7 @@ export default function CreateGame() {
         addPlayer,
         addFruit,
         removeplayer,
+        removeFruit,
         subscribe,
         NotifyAll,
         state

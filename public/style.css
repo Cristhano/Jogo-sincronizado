@@ -83,6 +83,11 @@ button:active {
     height: 250px;
 }
 
+input{
+    box-shadow: 2px 2px 0px;
+    width: 100%;
+}
+
 /* Responsividade extra (celulares pequenos) */
 @media (max-width: 400px) {
     button {

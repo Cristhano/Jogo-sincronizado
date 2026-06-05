@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo</title>
+    <style>
+        @font-face {
+            font-family: 'Minecraft';
+            src: url('./fonts/Minecraftia.ttf') format('truetype');
+        }
+
+        body {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+
+            align-items: center;
+            justify-content: center;
+        }
+
+        #screen {
+            border: solid 10px gray;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+            image-rendering: -moz-crisp-edges;
+
+            width: 500px;
+            height: 500px;
+        }
+
+        #jogadores {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            border: solid 1px rgb(221, 191, 159);
+            border-radius: 4px;
+            margin: 7px;
+            font-family: 'Minecraft', sans-serif;
+
+            width: 100%;
+            max-width: 400px;
+            background-color: bisque;
+        }
+
+        #playerDiv {
+            font-size: 100%;
+            font-family: 'Minecraft', sans-serif;
+        }
+    </style>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+
+<body>
+    <canvas id="screen" width="21" height="21"></canvas>
+    <div id="jogadores"></div>
+
+    <script type="module">
+        import createKeybordListenes from './KeybordListenes.js'
+        import CreateGame from './game.js'
+        import renderScreen from './render-screen.js'
+        import SetPlayer from './setplayer.js'
+
+        const socket = io()
+        const screen = document.getElementById("screen");
+        const game = CreateGame()
+        const playersBox = document.getElementById('jogadores')
+
+        let state = game.state
+
+        const playerId = localStorage.getItem("playerId")
+        console.log(playerId)
+        socket.emit("myId", playerId)
+
+        socket.on('connect', () => {
+            console.log('Jogador conectado no servidor com o id:' + playerId)
+
+            const KeybordListenes = createKeybordListenes(document, playerId)
+            KeybordListenes.registerPlayerId(playerId)
+            KeybordListenes.subscribe(game.movePlayer)
+            KeybordListenes.subscribe((command) => {
+                socket.emit('move-player', command)
+            })
+        })
+
+        socket.on('disconnect', (socket) => {
+            console.log(game.state)
+            console.log('Desconectando jogador: ')
+            console.log(playerId)
+            game.removeplayer(playerId)
+        })
+        socket.on('setup', (state) => {
+            game.state = state
+            renderScreen(screen, state, playerId, requestAnimationFrame)
+
+            playersBox.innerHTML = "Jogadores conectados: "
+            for (const playerId in game.state.players) {
+                const NewPlayerDiv = document.createElement("div")
+                NewPlayerDiv.id = 'playerDiv'
+                NewPlayerDiv.textContent = "Id: " + playerId + "  Pontos: " + game.state.players[playerId].cont
+
+                playersBox.appendChild(NewPlayerDiv)
+            }
+        })
+        socket.on('add-player', (command) => {
+            game.addPlayer(command)
+            console.log("Jogador conectado: " + command.playerId)
+        })
+        socket.on('remove-player', (command) => {
+            game.removeplayer(command)
+        })
+        socket.on('add-fruit', (command) => {
+            game.addFruit(command)
+        })
+        socket.on('remove-fruit', (command) => {
+            game.removeFruit(command)
+        })
+
+        socket.on('render', (command) => { renderScreen(screen, state, playerId, requestAnimationFrame) })
+    </script>
+</body>
+
+</html>
