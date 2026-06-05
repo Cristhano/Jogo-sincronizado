@@ -58,6 +58,12 @@
     <div id="jogadores"></div>
 
     <script type="module">
+        import express from 'express'
+
+        const app = express()
+
+        app.use(express.static('public'))
+
         import createKeybordListenes from './KeybordListenes.js'
         import CreateGame from './game.js'
         import renderScreen from './render-screen.js'

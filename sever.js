@@ -41,6 +41,6 @@ sockets.on('connection', (socket) => {
     
 })
 
-sever.listen(1650, () => {
-    console.log('Sever rodando na porta: 1650')
+sever.listen(3000, () => {
+    console.log('Sever rodando na porta: 3000')
 })
