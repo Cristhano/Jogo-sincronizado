@@ -72,14 +72,16 @@
 
         let state = game.state
 
-        const playerId = localStorage.getItem("playerId")
-        console.log(playerId)
+        const localPlayer = localStorage.getItem("playerId")
+        let playerId = null
+
+        if (localPlayer != null) { playerId = localPlayer }
         socket.emit("myId", playerId)
 
         socket.on('connect', () => {
             console.log('Jogador conectado no servidor com o id:' + playerId)
 
-            const KeybordListenes = createKeybordListenes(document, playerId)
+            const KeybordListenes = createKeybordListenes(game)
             KeybordListenes.registerPlayerId(playerId)
             KeybordListenes.subscribe(game.movePlayer)
             KeybordListenes.subscribe((command) => {
@@ -87,13 +89,14 @@
             })
         })
 
+        socket.on('start'  , () => {
+            game.start(playerId)
+        })
         socket.on('disconnect', (socket) => {
-            console.log(game.state)
-            console.log('Desconectando jogador: ')
-            console.log(playerId)
             game.removeplayer(playerId)
         })
         socket.on('setup', (state) => {
+            if (playerId != null) { playerId = socket.id }
             game.state = state
             renderScreen(screen, state, playerId, requestAnimationFrame)
 
@@ -101,14 +104,14 @@
             for (const playerId in game.state.players) {
                 const NewPlayerDiv = document.createElement("div")
                 NewPlayerDiv.id = 'playerDiv'
-                NewPlayerDiv.textContent = "Id: " + playerId + "  Pontos: " + game.state.players[playerId].cont
+                NewPlayerDiv.textContent = "Id: " + playerId + "  |  Pontos: " + game.state.players[playerId].cont
 
                 playersBox.appendChild(NewPlayerDiv)
             }
         })
+
         socket.on('add-player', (command) => {
             game.addPlayer(command)
-            console.log("Jogador conectado: " + command.playerId)
         })
         socket.on('remove-player', (command) => {
             game.removeplayer(command)

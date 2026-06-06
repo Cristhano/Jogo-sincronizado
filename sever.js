@@ -1,19 +1,17 @@
 import express from 'express'
 import http from 'http'
 import CreateGame from './public/game.js'
-import SetPlayer from './public/setplayer.js'
 import { Server } from 'socket.io'
+import { type } from 'os'
 
 const app = express()
 const sever = http.createServer(app)
 const sockets = new Server(sever)
 
-let playerId = null
-
 app.use(express.static('public'))
 
 const game = CreateGame()
-game.addFruit({})
+game.addFruit({type: 'add-fruit'})
 
 game.subscribe((command) => {
     sockets.emit(command.type, command)
@@ -21,15 +19,18 @@ game.subscribe((command) => {
 })
 
 sockets.on('connection', (socket) => {
-    
-    socket.on("myId", (myId) => {
-        playerId = myId
-        console.log("PlayerId recebido: " + myId)
+    let playerId = socket.id
 
-        game.addPlayer({ playerId })
+    socket.on("myId", (myId) => {
+        if (!myId) { game.addPlayer({ playerId }) } else {
+            playerId = myId
+        }
+        console.log("Jogador Conectado: " + playerId)
+        game.addPlayer({ playerId: playerId, type: 'add-player' })
+        socket.emit('start', (playerId))
     })
+
     socket.on('disconnect', () => {
-        console.log('Jogador desconectado:', playerId)
         game.removeplayer({ playerId: playerId })
     })
     socket.on('move-player', (command) => {
@@ -38,7 +39,7 @@ sockets.on('connection', (socket) => {
 
         game.movePlayer(command)
     })
-    
+
 })
 
 sever.listen(3000, () => {

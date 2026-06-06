@@ -1,4 +1,4 @@
-export default function createKeybordListenes(document) {
+export default function createKeybordListenes(game) {
     const state = {
         obsevers: [], //observadores
         playerId: null
@@ -21,11 +21,11 @@ export default function createKeybordListenes(document) {
     function handleKeyDown(event) {
         const keyPressed = event.key
         const command = {
-            type: 'move-player',
+            type: 'current-key',
             playerId: state.playerId,
             keyPressed
         }
-        NotifyAll(command)
+        game.UpdateKey(command)
     }
 
     return {

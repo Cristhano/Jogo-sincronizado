@@ -9,6 +9,24 @@ export default function CreateGame() {
     }
 
     const obsevers = []
+    let CurrentKey = ""
+
+    function UpdateKey(command) {
+        CurrentKey = command.keyPressed
+        console.log(CurrentKey)
+    }
+
+    function start(player) {
+        const frequency = 600
+
+        setInterval(() => {
+            movePlayer({
+                playerId: player,
+                type: 'move-player',
+                keyPressed: CurrentKey
+            })
+        }, frequency)
+    }
 
     function subscribe(ObseverFunction) { // Registrar Observador
         obsevers.push(ObseverFunction)
@@ -21,6 +39,7 @@ export default function CreateGame() {
 
     //Adicionar----------
     function addPlayer(command) {
+        if (command.type != 'add-player') { return }
         let player = command.playerId
         let X = command.playerX; if (X === undefined) { X = Math.floor(Math.random() * state.screen.width) }
         let Y = command.playerY; if (Y === undefined) { Y = Math.floor(Math.random() * state.screen.height) }
@@ -39,18 +58,27 @@ export default function CreateGame() {
         })
     }
     function addFruit(command) {
+        if (command.type != 'add-fruit') { return }
         let fruit
-        if(command.fruitId){fruit = command.fruitId}else{
+        if (command.fruitId) { fruit = command.fruitId } else {
             fruit = 'fruit ' + Math.floor(Math.random() * 100)
         }
         let X = command.fruitX; if (!X) { X = Math.floor(Math.random() * state.screen.width) }
         let Y = command.fruitY; if (!Y) { Y = Math.floor(Math.random() * state.screen.height) }
 
         state.fruits[fruit] = { x: X, y: Y }
+
+        NotifyAll({
+            type: 'add-fruit',
+            fruitId: fruit,
+            fruitX: X,
+            fruitY: Y
+        })
     }
 
     //remover---------
     function removeplayer(command) {
+        if (command.type != 'remove-player') { return }
         delete state.players[command.playerId]
 
         NotifyAll({
@@ -58,8 +86,14 @@ export default function CreateGame() {
             playerId: command.playerId
         })
     }
-    function removeFruit(fruit) {
-        delete state.fruits[fruit]
+    function removeFruit(command) {
+        if (command.type != 'remove-fruit') { return }
+        delete state.fruits[command.fruitId]
+
+        NotifyAll({
+            type: 'remove-fruit',
+            fruitId: command.fruitId
+        })
     }
     //Checa Coilsão
     function checkColision(player) {
@@ -72,16 +106,16 @@ export default function CreateGame() {
             let fruitY = fruit.y
 
             if (playerX === fruitX & playerY === fruitY) {
-                removeFruit(fruitId)
                 player.cont += 1
-                addFruit({ fruitId: 'fruit' + Math.floor(Math.random() * 10), random: true })
-                console.log(player.cont)
+                removeFruit({ fruitId: fruitId, type: 'remove-fruit' })
             }
         }
     }
     //Mover Jogador------
     function movePlayer(command) {
         if (command.type != 'move-player') { return }
+
+        console.log("Move player usando fun")
 
         const playerId = command.playerId
         const player = state.players[playerId];
@@ -99,9 +133,6 @@ export default function CreateGame() {
             MoveFunction(player)
             checkColision(player)
             NotifyAll(command)
-
-            console.log("move: " + player)
-            console.log(state)
         }
 
     }
@@ -114,6 +145,8 @@ export default function CreateGame() {
         removeFruit,
         subscribe,
         NotifyAll,
+        UpdateKey,
+        start,
         state
     };
 };

@@ -1,9 +1,11 @@
-let playerId = null
+let playerId
 
 export default function SetPlayerState() {
     function SetPlayerFunc(id) {
         playerId = id
-        localStorage.setItem("playerId", id)
+        if(playerId === ""){}
+        if(playerId === " "){}
+        localStorage.setItem("playerId", playerId)
         window.location.href = "./Jogo.html"
     }
     return {
