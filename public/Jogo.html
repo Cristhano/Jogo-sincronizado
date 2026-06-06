@@ -74,6 +74,9 @@
 
         const localPlayer = localStorage.getItem("playerId")
         let playerId = null
+        const playersDeath = {
+            players: {}
+        }
 
         if (localPlayer != null) { playerId = localPlayer }
         socket.emit("myId", playerId)
@@ -83,31 +86,38 @@
 
             const KeybordListenes = createKeybordListenes(game)
             KeybordListenes.registerPlayerId(playerId)
-            KeybordListenes.subscribe(game.movePlayer)
-            KeybordListenes.subscribe((command) => {
+            //KeybordListenes.subscribe(game.movePlayer)
+            game.subscribe((command) => {
                 socket.emit('move-player', command)
+            })
+            game.subscribe((command) => {
+                socket.emit('on-death', command)
             })
         })
 
-        socket.on('start'  , () => {
-            game.start(playerId)
+        socket.on('start', (command) => {
+            game.start({playerId: command.playerId, freq: command.freq})
         })
         socket.on('disconnect', (socket) => {
             game.removeplayer(playerId)
         })
         socket.on('setup', (state) => {
-            if (playerId != null) { playerId = socket.id }
+            if (!playerId) { playerId = socket.id }
             game.state = state
-            renderScreen(screen, state, playerId, requestAnimationFrame)
 
             playersBox.innerHTML = "Jogadores conectados: "
             for (const playerId in game.state.players) {
                 const NewPlayerDiv = document.createElement("div")
                 NewPlayerDiv.id = 'playerDiv'
                 NewPlayerDiv.textContent = "Id: " + playerId + "  |  Pontos: " + game.state.players[playerId].cont
+                for (const plrDeath in playersDeath.players) {
+                    if (plrDeath === playerId) { NewPlayerDiv.style.color = "red" }
+                }
 
                 playersBox.appendChild(NewPlayerDiv)
             }
+
+            renderScreen(screen, state, playerId, requestAnimationFrame)
         })
 
         socket.on('add-player', (command) => {
@@ -121,6 +131,16 @@
         })
         socket.on('remove-fruit', (command) => {
             game.removeFruit(command)
+        })
+        socket.on('recipe-death', (command) => {
+            let cont = 0
+            playersDeath.players[command.playerId] = ""
+
+            setInterval(() => {
+                if(cont === 1){delete playersDeath.players[command.playerId]; return}else{
+                    cont += 1
+                }
+            }, 300)
         })
 
         socket.on('render', (command) => { renderScreen(screen, state, playerId, requestAnimationFrame) })
