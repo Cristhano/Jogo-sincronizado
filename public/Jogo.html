@@ -71,6 +71,7 @@
         const playersBox = document.getElementById('jogadores')
 
         let state = game.state
+        let playersConectados = 0
 
         const localPlayer = localStorage.getItem("playerId")
         let playerId = null
@@ -105,7 +106,9 @@
             if (!playerId) { playerId = socket.id }
             game.state = state
 
-            playersBox.innerHTML = "Jogadores conectados: "
+            playersConectados = 0
+            for(const plr in game.state.players){playersConectados += 1}
+            playersBox.innerHTML = "Jogadores conectados: " + playersConectados
             for (const playerId in game.state.players) {
                 const NewPlayerDiv = document.createElement("div")
                 NewPlayerDiv.id = 'playerDiv'
