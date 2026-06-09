@@ -2,6 +2,7 @@ import express from 'express'
 import http from 'http'
 import CreateGame from './public/game.js'
 import { Server } from 'socket.io'
+import { type } from 'os'
 
 const app = express()
 const sever = http.createServer(app)
@@ -11,6 +12,13 @@ app.use(express.static('public'))
 
 const game = CreateGame()
 let players = 0
+let fruitSpawner
+let intervalDeEspera
+
+let msgcont = 1
+const msgespera1 = "Esperando Jogadores."
+const msgespera2 = "Esperando Jogadores.."
+const msgespera3 = "Esperando Jogadores..."
 
 game.subscribe((command) => {
     sockets.emit(command.type, command)
@@ -28,14 +36,37 @@ sockets.on('connection', (socket) => {
             game.addPlayer({ playerId: playerId, type: 'add-player' })
         }
         console.log("Jogador Conectado: " + playerId)
-        socket.emit('start', ({playerId: playerId, freq: 300}))
+        sockets.emit('start', ({playerId: playerId, freq: 300}))
 
         players += 1
+        if(players === 1){
+            intervalDeEspera = setInterval(() => {
+                if(msgcont === 1){sockets.emit("contagem", msgespera1); msgcont += 1}else if
+                (msgcont === 2){sockets.emit("contagem", msgespera2); msgcont += 1}else if
+                (msgcont === 3){sockets.emit("contagem", msgespera3); msgcont = 1}
+            }, 1000)
+        }
+        if(players === 3){
+            let i = 15
+            clearInterval(intervalDeEspera)
+            const contagem = setInterval(() => {
+                if(i === 0){
+                    clearInterval(contagem)
+                    sockets.emit('contagem', "Começado!")
+                    fruitSpawner = setInterval(() => {game.addFruit({type: 'add-fruit'})}, 3000)
+                }else{
+                    i--
+                    sockets.emit('contagem', "começando em: " + i)
+                }
+            }, 1000)
+        }
     })
 
     socket.on('disconnect', () => {
         game.removeplayer({ playerId: playerId, type: 'remove-player' })
         players -= 1
+
+        if(players === 0){clearInterval(fruitSpawner)}
     })
     socket.on('move-player', (command) => {
         if (command.type != 'move-player') { return }

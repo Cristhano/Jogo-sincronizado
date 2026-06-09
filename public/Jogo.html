@@ -11,7 +11,11 @@
             src: url('./fonts/Minecraftia.ttf') format('truetype');
         }
 
-        body {
+        body{
+            align-items: center;
+            text-align: center;
+        }
+        #caixa {
             display: flex;
             flex-direction: row;
             flex-wrap: wrap;
@@ -49,13 +53,20 @@
             font-size: 100%;
             font-family: 'Minecraft', sans-serif;
         }
+
+        h1 {
+            position: fixed;
+        }
     </style>
     <script src=""></script>
 </head>
 
 <body>
-    <canvas id="screen" width="21" height="21"></canvas>
-    <div id="jogadores"></div>
+    <h1 id="h1">|---</h1>
+    <div id="caixa">
+        <canvas id="screen" width="21" height="21"></canvas>
+        <div id="jogadores"></div>
+    </div>
 
     <script type="module">
         import io from "https://cdn.socket.io/4.8.1/socket.io.esm.min.js"
@@ -69,6 +80,7 @@
         const screen = document.getElementById("screen");
         const game = CreateGame()
         const playersBox = document.getElementById('jogadores')
+        const h1 = document.getElementById("h1")
 
         let state = game.state
         let playersConectados = 0
@@ -97,7 +109,7 @@
         })
 
         socket.on('start', (command) => {
-            game.start({playerId: command.playerId, freq: command.freq})
+            game.start({ playerId: command.playerId, freq: command.freq })
         })
         socket.on('disconnect', (socket) => {
             game.removeplayer(playerId)
@@ -107,7 +119,7 @@
             game.state = state
 
             playersConectados = 0
-            for(const plr in game.state.players){playersConectados += 1}
+            for (const plr in game.state.players) { playersConectados += 1 }
             playersBox.innerHTML = "Jogadores conectados: " + playersConectados
             for (const playerId in game.state.players) {
                 const NewPlayerDiv = document.createElement("div")
@@ -140,11 +152,14 @@
             playersDeath.players[command.playerId] = ""
 
             setInterval(() => {
-                if(cont === 1){delete playersDeath.players[command.playerId]; return}else{
+                if (cont === 1) { delete playersDeath.players[command.playerId]; return } else {
                     cont += 1
                 }
             }, 300)
         })
+        socket.on('contagem', (info => {
+            h1.textContent = info
+        }))
 
         socket.on('render', (command) => { renderScreen(screen, state, playerId, requestAnimationFrame) })
     </script>
