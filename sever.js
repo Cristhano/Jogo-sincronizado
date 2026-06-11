@@ -36,7 +36,7 @@ sockets.on('connection', (socket) => {
             game.addPlayer({ playerId: playerId, type: 'add-player' })
         }
         console.log("Jogador Conectado: " + playerId)
-        sockets.emit('start', ({playerId: playerId, freq: 500}))
+        sockets.emit('start', ({playerId: playerId, freq: 400}))
 
         players += 1
         if(players === 1){
@@ -76,7 +76,6 @@ sockets.on('connection', (socket) => {
     })
     socket.on('on-death', (command) => {
         if (command.type != 'on-death') { return }
-        console.log("player death: " + command.playerId)
         sockets.emit('recipe-death', command)
     })
 

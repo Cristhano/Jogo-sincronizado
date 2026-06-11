@@ -7,7 +7,6 @@ export default function CreateGame() {
             height: 21
         }
     }
-
     const obsevers = []
     let CurrentKey = ""
     let playerDeath = false
@@ -16,13 +15,13 @@ export default function CreateGame() {
         CurrentKey = command.keyPressed
     }
 
-    let frequency = 500
+    let frequency = 400
     let megafrequency = 200
     let ConstantMove
 
     function start(command) {
         clearInterval(ConstantMove)
-        console.log(CurrentKey)
+        if(!command.playerId){return}
         const player = command.playerId
         const freq = command.freq
 
@@ -85,8 +84,6 @@ export default function CreateGame() {
 
         if (command.mega) { Megafruit = command.mega }
         if (chanceMegaFruit === 5 && !Megafruit) {
-            fruit = 'Megafruit ' + Math.floor(Math.random() * 100000); Megafruit = true
-            console.log("Mega Fruit Spawned!")
         }
         state.fruits[fruit] = { x: X, y: Y, mega: Megafruit }
 
@@ -141,10 +138,7 @@ export default function CreateGame() {
                     clearInterval(intervalId)
                     start({ playerId: playerId, freq: megafrequency })
 
-                    console.log("Mega Fruit Collect")
-
                     intervalId = setInterval(() => {
-                        console.log("Mega Fruit sai em: ", i)
 
                         i -= 1
 
@@ -165,6 +159,7 @@ export default function CreateGame() {
     //Mover Jogador------
     function movePlayer(command) {
         if (command.type != 'move-player') { return }
+        if (!command.playerId) { return }
         if (playerDeath) { return }
 
         const playerId = command.playerId
@@ -176,18 +171,10 @@ export default function CreateGame() {
 
         function OnDeath() {
             const segiments = player.segiment.length
-
             if (segiments === 0) { return }
 
             Death = true
-
-            player.segiment = []
-            player.history = []
-
-            player.y = 11;
-            player.x = 11;
-            player.cont -= 1
-
+            clearInterval(ConstantMove)
             NotifyAll({ type: 'on-death', playerId: command.playerId })
             OnPlayerDeath(playerId)
         }
@@ -219,22 +206,23 @@ export default function CreateGame() {
         }
         const MoveFunction = acceptedMoves[keyPressed]
 
-        const maxHistory = (player.segiment.length + 1) * 10
-
-        if (player.history.length > maxHistory) {
-            player.history.pop()
-        }
 
         if (player && MoveFunction) {
             MoveFunction(player)
             CheckHistory(player)
             if (Death) { return }
+            NotifyAll(command)
+
             player.history.unshift({ x: player.x, y: player.y })
             checkColision(player, playerId)
-            NotifyAll(command)
             moveSegiment(player)
         }
 
+        const maxHistory = (player.segiment.length + 1)
+
+        if (player.history.length > maxHistory) {
+            player.history.pop()
+        }
     }
     function addSegiment(player) {
         player.segiment.push({ x: player.x, y: player.y })
@@ -259,10 +247,13 @@ export default function CreateGame() {
     }
     function OnPlayerDeath(player) {
         playerDeath = true
-        setTimeout(() => {
+        setTimeout(() => {  
+            removeplayer({playerId: player, type:'remove-player'})
             playerDeath = false
+            start({playerId:player, freq: frequency})
+            addPlayer({playerId: player, playerX: 11, playerY: 11, type:'add-player'})
             start({ playerId: player, freq: frequency })
-        }, 2000)
+        }, 1000)
     }
     return {
         movePlayer,

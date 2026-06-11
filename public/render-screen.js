@@ -15,7 +15,7 @@ export default function renderScreen(screen, state, plr, requestAnimationFrame) 
             context.fillStyle = 'black' //cor do jogadores
             context.globalAlpha = 0.5;
             if (playerId === plr) { context.fillStyle = "red"; context.globalAlpha = 0.7; }
-            if (player.buff) { context.fillStyle = "rgb(255, 215, 0)"; context.globalAlpha = 0.7; }
+            if (player.buff) { context.fillStyle = "rgb(255, 215, 0)"; context.globalAlpha = 0.6; }
 
             context.fillRect(segiment.x, segiment.y, 1, 1)
         }
