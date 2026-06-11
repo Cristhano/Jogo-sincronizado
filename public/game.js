@@ -172,13 +172,7 @@ export default function CreateGame() {
         const keyPressed = command.keyPressed
         let Death = false
 
-        player.history.unshift({ x: player.x, y: player.y })
 
-        const maxHistory = (player.segiment.length + 1) * 10
-
-        if (player.history.length > maxHistory) {
-            player.history.pop()
-        }
 
         function OnDeath() {
             const segiments = player.segiment.length
@@ -225,10 +219,17 @@ export default function CreateGame() {
         }
         const MoveFunction = acceptedMoves[keyPressed]
 
+        const maxHistory = (player.segiment.length + 1) * 10
+
+        if (player.history.length > maxHistory) {
+            player.history.pop()
+        }
+
         if (player && MoveFunction) {
             MoveFunction(player)
             CheckHistory(player)
             if (Death) { return }
+            player.history.unshift({ x: player.x, y: player.y })
             checkColision(player, playerId)
             NotifyAll(command)
             moveSegiment(player)
