@@ -11,12 +11,13 @@
             src: url('./fonts/Minecraftia.ttf') format('truetype');
         }
 
-        body{
+        body {
             align-items: center;
             text-align: center;
 
             transition: filter 0.3s ease;
         }
+
         #caixa {
             display: flex;
             flex-direction: row;
@@ -59,44 +60,46 @@
         h1 {
             position: fixed;
         }
+
         button {
-        width: 55px;
-        height: 55px;
-        margin: 8px 0;
+            width: 55px;
+            height: 55px;
+            margin: 8px 0;
 
-        border: none;
-        border-radius: 12px;
+            border: none;
+            border-radius: 12px;
 
-        font-size: 18px;
-        font-weight: 600;
+            font-size: 18px;
+            font-weight: 600;
 
-        color: #fff;
-        background: linear-gradient(135deg, #4a6cff, #6a8dff);
+            color: #fff;
+            background: linear-gradient(135deg, #4a6cff, #6a8dff);
 
-        cursor: pointer;
+            cursor: pointer;
 
-        /* Sombra moderna */
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+            /* Sombra moderna */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
 
-        transition: all 0.2s ease;
+            transition: all 0.2s ease;
         }
-        button:active{
+
+        button:active {
             scale: 1.1;
         }
     </style>
 </head>
 
-<body>   
+<body>
     <div id="caixa">
         <canvas id="screen" width="21" height="21"></canvas>
         <div id='button-mob'>
-            <button type="button">^</button>
+            <button type="button" id="up">^</button>
             <div>
-                <button type="button"><</button>
-                <button type="button">v</button>
-                <button type="button">></button>
+                <button type="button" id="left"><</button>
+                <button type="button" id="down">v</button>
+                <button type="button" id="right">></button>
             </div>
-            
+
         </div>
     </div>
     <h1 id="h1">|---</h1>
@@ -123,24 +126,35 @@
         const playersDeath = {
             players: {}
         }
-        const MobileMoves = {
-            ArrowUp(){
-                game.UpdateKey({keyPressed: "ArrowUp"})
-            },
-            ArrowDown(){
-                game.UpdateKey({keyPressed: "ArrowDown"})
-            },
-            ArrowLeft(){
-                game.UpdateKey({keyPressed: "ArrowLeft"})
-            },
-            ArrowRight(){
-                game.UpdateKey({keyPressed: "ArrowRight"})
-            },
-        }
-        function move(key){
-            const moveFunction = MobileMoves[key]
-            if(moveFunction){
-                moveFunction()
+
+        document.getElementById("up").addEventListener("click", () => {
+            move("ArrowUp")
+        })
+
+        document.getElementById("down").addEventListener("click", () => {
+            move("ArrowDown")
+        })
+
+        document.getElementById("left").addEventListener("click", () => {
+            move("ArrowLeft")
+        })
+
+        document.getElementById("right").addEventListener("click", () => {
+            move("ArrowRight")
+        })
+
+        function move(key) {
+            if (key === 'ArrowUp') {
+                game.UpdateKey({ keyPressed: "ArrowUp" })
+            }
+            if (key === "ArrowDown") {
+                game.UpdateKey({ keyPressed: "ArrowDown" })
+            }
+            if (key === "ArrowLeft") {
+                game.UpdateKey({ keyPressed: "ArrowLeft" })
+            }
+            if (key === "ArrowRight") {
+                game.UpdateKey({ keyPressed: "ArrowRight" })
             }
         }
         if (localPlayer != null) { playerId = localPlayer }
