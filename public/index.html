@@ -20,6 +20,8 @@
         import SetPlayer from './setplayer.js'
         const setfunc = SetPlayer()
 
+        const isMobile = /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
+
         const caixa = document.getElementById("caixa")
         const btnHost = document.getElementById("Join")
         const btnJoin = document.getElementById("Host")
@@ -29,7 +31,15 @@
 
         btnHost.onclick = function Host() {
             setfunc.SetPlayerFunc(input.value)
+            if(isMobile){
+                window.location.href = "./JogoMobile.html"
+            }else{
+                window.location.href = "./Jogo.html"
+            }
         }
+
+        
+
     </script>
 </body>
 

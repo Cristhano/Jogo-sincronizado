@@ -46,7 +46,7 @@ sockets.on('connection', (socket) => {
                 (msgcont === 3){sockets.emit("contagem", msgespera3); msgcont = 1}
             }, 1000)
         }
-        if(players === 3){
+        if(players === 2){
             let i = 15
             clearInterval(intervalDeEspera)
             const contagem = setInterval(() => {

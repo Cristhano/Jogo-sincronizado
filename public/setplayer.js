@@ -6,7 +6,6 @@ export default function SetPlayerState() {
         if(playerId === ""){}
         if(playerId === " "){}
         localStorage.setItem("playerId", playerId)
-        window.location.href = "./Jogo.html"
     }
     return {
         SetPlayerFunc,
