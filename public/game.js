@@ -55,7 +55,9 @@ export default function CreateGame() {
             x: X,
             y: Y,
             cont: 0,
-            buff: buffed
+            buff: buffed,
+            segiment: [],
+            history: []
         }
 
         NotifyAll({
@@ -63,7 +65,9 @@ export default function CreateGame() {
             playerId: player,
             playerX: X,
             playerY: Y,
-            buff: buffed
+            buff: buffed,
+            segiment: [],
+            history: []
         })
     }
     function addFruit(command) {
@@ -127,6 +131,7 @@ export default function CreateGame() {
             let intervalId
 
             if (playerX === fruitX & playerY === fruitY) {
+                addSegiment(player)
                 if (FruitMega === true) {
                     player.cont += 10
                     player.buff = true
@@ -184,10 +189,31 @@ export default function CreateGame() {
             MoveFunction(player)
             checkColision(player, playerId)
             NotifyAll(command)
+            moveSegiment(player)
         }
 
     }
+function addSegiment(player) {
+        player.segiment.push({ x: player.x, y: player.y })
+    }
+    function moveSegiment(player) {
+        let prevX = player.x
+        let prevY = player.y
 
+        for (let i = 0; i < player.segiment.length; i++) {
+            const segment = player.segiment[i]
+
+            const tempX = segment.x
+            const tempY = segment.y
+
+            segment.x = prevX
+            segment.y = prevY
+
+            prevX = tempX
+            prevY = tempY
+        }
+
+    }
     return {
         movePlayer,
         addPlayer,
