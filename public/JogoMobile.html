@@ -14,6 +14,8 @@
         body{
             align-items: center;
             text-align: center;
+
+            transition: filter 0.3s ease;
         }
         #caixa {
             display: flex;
@@ -31,7 +33,7 @@
             image-rendering: -moz-crisp-edges;
 
             width: 90%;
-            height: 450px;
+            height: 400px;
         }
 
         #jogadores {
@@ -121,7 +123,26 @@
         const playersDeath = {
             players: {}
         }
-
+        const MobileMoves = {
+            ArrowUp(){
+                game.UpdateKey({keyPressed: "ArrowUp"})
+            },
+            ArrowDown(){
+                game.UpdateKey({keyPressed: "ArrowDown"})
+            },
+            ArrowLeft(){
+                game.UpdateKey({keyPressed: "ArrowLeft"})
+            },
+            ArrowRight(){
+                game.UpdateKey({keyPressed: "ArrowRight"})
+            },
+        }
+        function move(key){
+            const moveFunction = MobileMoves[key]
+            if(moveFunction){
+                moveFunction()
+            }
+        }
         if (localPlayer != null) { playerId = localPlayer }
         socket.emit("myId", playerId)
 
@@ -168,6 +189,12 @@
             let cont = 0
             playersDeath.players[command.playerId] = ""
 
+            if (command.playerId === playerId) {
+                document.body.style.filter = "grayscale(100%)"
+                setTimeout(() => {
+                    document.body.style.filter = "none"
+                }, 3000)
+            }
             setInterval(() => {
                 if (cont === 1) { delete playersDeath.players[command.playerId]; return } else {
                     cont += 1

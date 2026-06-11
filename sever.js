@@ -36,7 +36,7 @@ sockets.on('connection', (socket) => {
             game.addPlayer({ playerId: playerId, type: 'add-player' })
         }
         console.log("Jogador Conectado: " + playerId)
-        sockets.emit('start', ({playerId: playerId, freq: 300}))
+        sockets.emit('start', ({playerId: playerId, freq: 500}))
 
         players += 1
         if(players === 1){
@@ -46,8 +46,8 @@ sockets.on('connection', (socket) => {
                 (msgcont === 3){sockets.emit("contagem", msgespera3); msgcont = 1}
             }, 1000)
         }
-        if(players === 2){
-            let i = 15
+        if(players === 1){
+            let i = 6
             clearInterval(intervalDeEspera)
             const contagem = setInterval(() => {
                 if(i === 0){

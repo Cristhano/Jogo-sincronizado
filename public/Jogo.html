@@ -11,10 +11,13 @@
             src: url('./fonts/Minecraftia.ttf') format('truetype');
         }
 
-        body{
+        body {
             align-items: center;
             text-align: center;
+
+            transition: filter 0.3s ease;
         }
+
         #caixa {
             display: flex;
             flex-direction: row;
@@ -151,6 +154,12 @@
             let cont = 0
             playersDeath.players[command.playerId] = ""
 
+            if (command.playerId === playerId) {
+                document.body.style.filter = "grayscale(100%)"
+                setTimeout(() => {
+                    document.body.style.filter = "none"
+                }, 3000)
+            }
             setInterval(() => {
                 if (cont === 1) { delete playersDeath.players[command.playerId]; return } else {
                     cont += 1
