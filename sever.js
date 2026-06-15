@@ -3,14 +3,7 @@ import http from 'http'
 import CreateGame from './public/game.js'
 import { Server } from 'socket.io'
 import { type } from 'os'
-//---banco
-import pool from './database.js'
 
-pool.connect()
-    .then(() => console.log('Banco conectado!'))
-    .catch(err => console.error('Erro ao conectar:', err))
-
-//---
 const app = express()
 const sever = http.createServer(app)
 const sockets = new Server(sever)
