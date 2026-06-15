@@ -7,10 +7,18 @@ export default function renderScreen(screen, state, plr, requestAnimationFrame) 
     for (const playerId in state.players) { //renderiza os players
         const player = state.players[playerId]
         context.fillStyle = 'black' //cor do jogadores
-        context.globalAlpha = 0.5;
+        context.globalAlpha = 0.7;
         if (playerId === plr) { context.fillStyle = "red"; context.globalAlpha = 0.9; }
-        if (player.buff) {context.fillStyle = "rgb(255, 215, 0)"; context.globalAlpha = 0.9;}
+        if (player.buff) { context.fillStyle = "rgb(255, 215, 0)"; context.globalAlpha = 0.9; }
         context.fillRect(player.x, player.y, 1, 1)
+        for (const segiment of player.segiment) {
+            context.fillStyle = 'black' //cor do jogadores
+            context.globalAlpha = 0.5;
+            if (playerId === plr) { context.fillStyle = "red"; context.globalAlpha = 0.7; }
+            if (player.buff) { context.fillStyle = "rgb(255, 215, 0)"; context.globalAlpha = 0.6; }
+
+            context.fillRect(segiment.x, segiment.y, 1, 1)
+        }
     }
     for (const fruitId in state.fruits) { //renderiza as frutas
         const fruit = state.fruits[fruitId]
@@ -20,7 +28,7 @@ export default function renderScreen(screen, state, plr, requestAnimationFrame) 
             const b = Math.floor(Math.random() * 255)
 
             context.fillStyle = `rgb(${r}, ${g}, ${b})`
-        }else{context.fillStyle = "green"}
+        } else { context.fillStyle = "green" }
         context.globalAlpha = 1;
         context.fillRect(fruit.x, fruit.y, 1, 1)
     }

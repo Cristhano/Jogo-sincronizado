@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Leaderboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <h1>Ranking</h1>
+    <div id="lb"></div>
+
+    <script>
+        async function carregarLeaderboard() {
+            const resposta = await fetch('/leaderboard');
+            const dados = await resposta.json();
+
+            const lb = document.getElementById('lb');
+
+            lb.innerHTML = '';
+
+            dados.forEach((player, posicao) => {
+                lb.innerHTML += `
+                    <p>
+                        ${posicao + 1}º - ${player.nome}
+                        (${player.pontuacao} pontos)
+                    </p>
+                `;
+            });
+        }
+
+        carregarLeaderboard();
+    </script>
+
+</body>
+</html>

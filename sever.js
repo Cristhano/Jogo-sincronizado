@@ -3,7 +3,14 @@ import http from 'http'
 import CreateGame from './public/game.js'
 import { Server } from 'socket.io'
 import { type } from 'os'
+//---banco
+import pool from './database.js'
 
+pool.connect()
+    .then(() => console.log('Banco conectado!'))
+    .catch(err => console.error('Erro ao conectar:', err))
+
+//---
 const app = express()
 const sever = http.createServer(app)
 const sockets = new Server(sever)
@@ -36,25 +43,25 @@ sockets.on('connection', (socket) => {
             game.addPlayer({ playerId: playerId, type: 'add-player' })
         }
         console.log("Jogador Conectado: " + playerId)
-        sockets.emit('start', ({playerId: playerId, freq: 300}))
+        sockets.emit('start', ({ playerId: playerId, freq: 400 }))
 
         players += 1
-        if(players === 1){
+        if (players === 1) {
             intervalDeEspera = setInterval(() => {
-                if(msgcont === 1){sockets.emit("contagem", msgespera1); msgcont += 1}else if
-                (msgcont === 2){sockets.emit("contagem", msgespera2); msgcont += 1}else if
-                (msgcont === 3){sockets.emit("contagem", msgespera3); msgcont = 1}
+                if (msgcont === 1) { sockets.emit("contagem", msgespera1); msgcont += 1 } else if
+                    (msgcont === 2) { sockets.emit("contagem", msgespera2); msgcont += 1 } else if
+                    (msgcont === 3) { sockets.emit("contagem", msgespera3); msgcont = 1 }
             }, 1000)
         }
-        if(players === 2){
-            let i = 15
+        if (players === 2) {
+            let i = 6
             clearInterval(intervalDeEspera)
             const contagem = setInterval(() => {
-                if(i === 0){
+                if (i === 0) {
                     clearInterval(contagem)
                     sockets.emit('contagem', "Começado!")
-                    fruitSpawner = setInterval(() => {game.addFruit({type: 'add-fruit'})}, 3000)
-                }else{
+                    fruitSpawner = setInterval(() => { game.addFruit({ type: 'add-fruit' }) }, 3000)
+                } else {
                     i--
                     sockets.emit('contagem', "começando em: " + i)
                 }
@@ -66,7 +73,7 @@ sockets.on('connection', (socket) => {
         game.removeplayer({ playerId: playerId, type: 'remove-player' })
         players -= 1
 
-        if(players === 0){clearInterval(fruitSpawner)}
+        if (players === 0) { clearInterval(fruitSpawner) }
     })
     socket.on('move-player', (command) => {
         if (command.type != 'move-player') { return }
@@ -76,7 +83,6 @@ sockets.on('connection', (socket) => {
     })
     socket.on('on-death', (command) => {
         if (command.type != 'on-death') { return }
-        console.log("player death: " + command.playerId)
         sockets.emit('recipe-death', command)
     })
 

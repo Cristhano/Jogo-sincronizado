@@ -19,7 +19,7 @@ body {
     font-family: 'Inter', sans-serif;
 }
 
-h1{
+h1 {
     color: white;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
@@ -31,7 +31,8 @@ h1{
     align-items: center;
 
     width: 100%;
-    max-width: 400px; /* Limita no PC, mas fica bom no celular */
+    max-width: 400px;
+    /* Limita no PC, mas fica bom no celular */
 }
 
 /* Botões */
@@ -69,7 +70,7 @@ button:active {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.divHost{
+.divHost {
     background-color: gray;
     width: 250px;
     height: 250px;
@@ -77,15 +78,23 @@ button:active {
     border: solid 1px black;
 }
 
-.divJoin{
+.divJoin {
     background-color: gray;
     width: 250px;
     height: 250px;
 }
 
-input{
+input {
     box-shadow: 2px 2px 0px;
     width: 100%;
+}
+
+.link {
+    position: fixed;
+    bottom: 20px;
+
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 /* Responsividade extra (celulares pequenos) */

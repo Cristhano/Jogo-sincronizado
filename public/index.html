@@ -15,7 +15,9 @@
             <input type="text" placeholder="Nick Name" id="input" required>
             <button type="button" id="Join">Entrar</button>
         </div>
+        <a href="./leaderboard.html" class="link">Leaderboard</a>
     </div>
+
     <script type="module">
         import SetPlayer from './setplayer.js'
         const setfunc = SetPlayer()
@@ -31,14 +33,14 @@
 
         btnHost.onclick = function Host() {
             setfunc.SetPlayerFunc(input.value)
-            if(isMobile){
+            if (isMobile) {
                 window.location.href = "./JogoMobile.html"
-            }else{
+            } else {
                 window.location.href = "./Jogo.html"
             }
         }
 
-        
+
 
     </script>
 </body>
