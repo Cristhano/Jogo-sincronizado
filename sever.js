@@ -12,8 +12,10 @@ app.use(express.static('public'))
 
 const game = CreateGame()
 let players = 0
+
 let fruitSpawner
 let intervalDeEspera
+let contagem
 
 let msgcont = 1
 const msgespera1 = "Esperando Jogadores."
@@ -49,7 +51,7 @@ sockets.on('connection', (socket) => {
         if (players === 2) {
             let i = 6
             clearInterval(intervalDeEspera)
-            const contagem = setInterval(() => {
+            contagem = setInterval(() => {
                 if (i === 0) {
                     clearInterval(contagem)
                     sockets.emit('contagem', "Começado!")
@@ -66,7 +68,8 @@ sockets.on('connection', (socket) => {
         game.removeplayer({ playerId: playerId, type: 'remove-player' })
         players -= 1
 
-        if (players === 0) { clearInterval(fruitSpawner) }
+        if (players === 0) { clearInterval(fruitSpawner); clearInterval(intervalDeEspera) }
+        if (players === 1) { clearInterval(contagem)}
     })
     socket.on('move-player', (command) => {
         if (command.type != 'move-player') { return }

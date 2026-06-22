@@ -31,6 +31,18 @@
 
         const title = document.getElementById("title")
 
+        document.addEventListener("keydown", function key(event) {
+            if (event.key === "Enter") {
+                if (isMobile) {
+                    window.location.href = "./JogoMobile.html"
+                } else {
+                    input.value = "Jogador" + Math.floor(Math.random() * 300)
+                    setfunc.SetPlayerFunc(input.value)
+                    window.location.href = "./Jogo.html"
+                }
+            }
+        })
+
         btnHost.onclick = function Host() {
             setfunc.SetPlayerFunc(input.value)
             if (isMobile) {
