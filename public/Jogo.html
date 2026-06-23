@@ -176,21 +176,22 @@
                 }
             }
         })
-        socket.on('recipe-death', (command) => {
+        socket.on('on-death', (command) => {
             let cont = 0
-            playersDeath.players[command.playerId] = ""
-            console.log("Jogador morto: " + command.playerId)
-            console.log("Meu Jogador: " + playerId)
+            
             if (command.playerId === playerId) {
                 document.body.style.filter = "grayscale(100%)"
                 hit.play()
                 setTimeout(() => {
                     hiteffect.play()
-                },300)
+                },0)
                 setTimeout(() => {
                     document.body.style.filter = "none"
-                }, 3000)
+                }, 1500)
             }
+
+            playersDeath.players[command.playerId] = ""
+
             setInterval(() => {
                 if (cont === 1) { delete playersDeath.players[command.playerId]; return } else {
                     cont += 1

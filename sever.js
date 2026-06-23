@@ -79,12 +79,12 @@ sockets.on('connection', (socket) => {
 
         game.movePlayer(command)
     })
-    socket.on('on-death', (command) => {
+    /*socket.on('on-death', (command) => {
         if (command.type != 'on-death') { return }
         sockets.emit('recipe-death', command)
         console.log("Jogador Morto: " + command.playerId)
-    })
-
+    })*/
+    
 })
 
 sever.listen(3000, () => {
