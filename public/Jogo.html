@@ -71,6 +71,13 @@
         <canvas id="screen" width="21" height="21"></canvas>
         <div id="jogadores"></div>
     </div>
+    <div>
+        <audio id="HIT" src="./sounds/impact.mp3"></audio>
+        <audio id="HITeffect" src="./sounds/impactBass.mp3"></audio>
+        <audio id="eate-apple" src="./sounds/eating-apple.mp3"></audio>
+        <audio id="musica" src="./sounds/8-bit-music.mp3" loop></audio>
+        <audio id="buff" src="./sounds/8-bit-explosion.mp3"></audio>
+    </div>
 
     <script type="module">
         import io from "https://cdn.socket.io/4.8.1/socket.io.esm.min.js"
@@ -86,6 +93,17 @@
         const playersBox = document.getElementById('jogadores')
         const h1 = document.getElementById("h1")
 
+        //Sons--
+        const musica = document.getElementById("musica")
+        const hit = document.getElementById("HIT")
+        const hiteffect = document.getElementById("HITeffect")
+        const eate_apple = document.getElementById("eate-apple")
+        const megabuff = document.getElementById("buff")
+
+        musica.volume = 0.5
+        musica.play();
+
+        //--
         let state = game.state
         let playersConectados = 0
 
@@ -136,7 +154,7 @@
                 playersBox.appendChild(NewPlayerDiv)
             }
 
-            renderScreen(screen, state, playerId, requestAnimationFrame)
+
         })
 
         socket.on('add-player', (command) => {
@@ -150,13 +168,25 @@
         })
         socket.on('remove-fruit', (command) => {
             game.removeFruit(command)
+
+            if (command.playerId === playerId) {
+                eate_apple.play()
+                if(command.mega){
+                    megabuff.play()
+                }
+            }
         })
         socket.on('recipe-death', (command) => {
             let cont = 0
             playersDeath.players[command.playerId] = ""
-
+            console.log("Jogador morto: " + command.playerId)
+            console.log("Meu Jogador: " + playerId)
             if (command.playerId === playerId) {
                 document.body.style.filter = "grayscale(100%)"
+                hit.play()
+                setTimeout(() => {
+                    hiteffect.play()
+                },300)
                 setTimeout(() => {
                     document.body.style.filter = "none"
                 }, 3000)
@@ -172,7 +202,7 @@
             h1.textContent = info
         }))
 
-        socket.on('render', (command) => { renderScreen(screen, state, playerId, requestAnimationFrame) })
+        socket.on('render', (command) => { renderScreen(screen, game.state, playerId, requestAnimationFrame) })
     </script>
 </body>
 

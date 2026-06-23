@@ -3,6 +3,7 @@ import http from 'http'
 import CreateGame from './public/game.js'
 import { Server } from 'socket.io'
 import { type } from 'os'
+import { Socket } from 'net'
 
 const app = express()
 const sever = http.createServer(app)
@@ -25,6 +26,7 @@ const msgespera3 = "Esperando Jogadores..."
 game.subscribe((command) => {
     sockets.emit(command.type, command)
     sockets.emit('setup', game.state)
+    sockets.emit('render')
 })
 
 sockets.on('connection', (socket) => {
@@ -80,6 +82,7 @@ sockets.on('connection', (socket) => {
     socket.on('on-death', (command) => {
         if (command.type != 'on-death') { return }
         sockets.emit('recipe-death', command)
+        console.log("Jogador Morto: " + command.playerId)
     })
 
 })
