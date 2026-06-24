@@ -204,6 +204,15 @@
         }))
 
         socket.on('render', (command) => { renderScreen(screen, game.state, playerId, requestAnimationFrame) })
+
+        window.addEventListener("message", (event) => {
+
+            const data = event.data
+
+            if (data.type === "keydown"){
+                game.UpdateKey(data.key)
+            }
+        })
     </script>
 </body>
 
