@@ -101,7 +101,6 @@
         const megabuff = document.getElementById("buff")
 
         musica.volume = 0.5
-        musica.play();
 
         //--
         let state = game.state
@@ -117,8 +116,9 @@
         socket.emit("myId", playerId)
 
         socket.on('connect', () => {
+            musica.play();
             console.log('Jogador conectado no servidor com o id:' + playerId)
-
+    
             const KeybordListenes = createKeybordListenes(game)
             KeybordListenes.registerPlayerId(playerId)
             //KeybordListenes.subscribe(game.movePlayer)
